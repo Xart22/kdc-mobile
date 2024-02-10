@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 class PrinterService extends GetxService {
   BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
   String address = '86:67:7A:0D:EC:27';
+  bool isPrinterConnected = false;
 
   Future<PrinterService> initPrinter() async {
     if (await FlutterBluePluss.FlutterBluePlus.isSupported == false) {

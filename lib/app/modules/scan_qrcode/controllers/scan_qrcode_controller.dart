@@ -12,6 +12,7 @@ class ScanQrcodeController extends GetxController {
   var capture = BarcodeCapture().obs;
 
   var isLoading = false.obs;
+  var isTablet = false.obs;
 
   onDetect(BarcodeCapture barcode) {
     capture.value = barcode;
@@ -26,6 +27,7 @@ class ScanQrcodeController extends GetxController {
 
   @override
   void onReady() {
+    isTablet.value = Get.width > 650;
     super.onReady();
   }
 }

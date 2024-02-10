@@ -100,7 +100,7 @@ class AddDataKendaraanController extends GetxController {
       type: LineText.TYPE_QRCODE,
       content: 'D 1234 AB',
       align: LineText.ALIGN_CENTER,
-      size: 8,
+      size: 20,
     ));
     list.add(LineText(linefeed: 1));
 

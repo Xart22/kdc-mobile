@@ -21,72 +21,97 @@ class ScanQrcodeView extends GetView<ScanQrcodeController> {
         title: const Text('Scan QR Code'),
         centerTitle: true,
       ),
-      body: Builder(
-        builder: (context) {
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              MobileScanner(
-                scanWindow: scanWindow,
-                controller: controller.controllerScanner,
-                onScannerStarted: (arguments) {
-                  controller.arguments.value = arguments!;
-                },
-                errorBuilder: (context, error, child) {
-                  return const Center(
-                    child: Text('Error occurred'),
-                  );
-                },
-                onDetect: controller.onDetect,
-              ),
-              Obx(() => controller.arguments.value.size.width == 0
-                  ? const Loading()
-                  : CustomPaint(
-                      painter: BarcodeOverlay(
-                        barcode: controller.barcode.value,
-                        arguments: controller.arguments.value,
-                        boxFit: BoxFit.contain,
-                        capture: controller.capture.value,
-                      ),
-                    )),
-              CustomPaint(
-                painter: ScannerOverlay(scanWindow),
-              ),
-              Align(
+      body: Obx(() {
+        if (controller.isTablet.value) {
+          return tableScanner(context);
+        } else {
+          return mobileScanner(scanWindow);
+        }
+      }),
+    );
+  }
+
+  Widget tableScanner(context) {
+    return TextFormField(
+        enabled: true,
+        autofocus: true,
+        autocorrect: false,
+        focusNode: FocusNode(),
+        textInputAction: TextInputAction.done,
+        keyboardType: TextInputType.text,
+        onFieldSubmitted: (val) {
+          //hide keyboard
+          FocusScope.of(context).unfocus();
+          print(val); // the scan value`},
+        });
+  }
+
+  Widget mobileScanner(Rect scanWindow) {
+    return Builder(
+      builder: (context) {
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            MobileScanner(
+              scanWindow: scanWindow,
+              controller: controller.controllerScanner,
+              onScannerStarted: (arguments) {
+                controller.arguments.value = arguments!;
+              },
+              errorBuilder: (context, error, child) {
+                return const Center(
+                  child: Text('Error occurred'),
+                );
+              },
+              onDetect: controller.onDetect,
+            ),
+            Obx(() => controller.arguments.value.size.width == 0
+                ? const Loading()
+                : CustomPaint(
+                    painter: BarcodeOverlay(
+                      barcode: controller.barcode.value,
+                      arguments: controller.arguments.value,
+                      boxFit: BoxFit.contain,
+                      capture: controller.capture.value,
+                    ),
+                  )),
+            CustomPaint(
+              painter: ScannerOverlay(scanWindow),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
                 alignment: Alignment.bottomCenter,
-                child: Container(
-                  alignment: Alignment.bottomCenter,
-                  height: 100,
-                  color: Colors.black.withOpacity(0.4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Center(
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width - 120,
-                          height: 50,
-                          child: FittedBox(
-                            child: Text(
-                              'Scan QR Code',
-                              overflow: TextOverflow.fade,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineMedium!
-                                  .copyWith(color: Colors.white),
-                            ),
+                height: 100,
+                color: Colors.black.withOpacity(0.4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Center(
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width - 120,
+                        height: 50,
+                        child: FittedBox(
+                          child: Text(
+                            'Scan QR Code',
+                            overflow: TextOverflow.fade,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium!
+                                .copyWith(color: Colors.white),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              Obx(() =>
-                  controller.isLoading.value ? const Loading() : Container()),
-            ],
-          );
-        },
-      ),
+            ),
+            Obx(() =>
+                controller.isLoading.value ? const Loading() : Container()),
+          ],
+        );
+      },
     );
   }
 }

@@ -27,15 +27,19 @@ class HomeView extends GetView<HomeController> {
                         fontSize: 14,
                       )),
                   const SizedBox(height: 20),
-                  Container(
-                    height: Get.height * 0.2 + 30,
-                    width: Get.width,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/home.png'),
-                        fit: BoxFit.fill,
-                      ),
-                    ),
+                  Obx(
+                    () => controller.isTablet.value
+                        ? Container()
+                        : Container(
+                            height: Get.height * 0.2 + 30,
+                            width: Get.width,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/home.png'),
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
                   ),
                   const SizedBox(height: 20),
                   Row(
