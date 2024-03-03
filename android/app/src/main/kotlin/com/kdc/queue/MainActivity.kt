@@ -1,4 +1,4 @@
-package com.example.kdc_mobile
+package com.kdc.queue
 
 import io.flutter.embedding.android.FlutterActivity
 

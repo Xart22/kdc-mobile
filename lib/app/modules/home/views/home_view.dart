@@ -21,11 +21,11 @@ class HomeView extends GetView<HomeController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Selamat Datang di Aplikasi',
+                  Obx(() => Text('Selamat Datang ${controller.user.value}',
                       style: GoogleFonts.openSans(
                         color: Colors.black,
                         fontSize: 14,
-                      )),
+                      ))),
                   const SizedBox(height: 20),
                   Obx(
                     () => controller.isTablet.value
@@ -67,10 +67,14 @@ class HomeView extends GetView<HomeController> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  buttonMenu(const Icon(Icons.add), 'Tambah Data Kendaraan',
-                      '/add-data-kendaraan'),
-                  buttonMenu(const Icon(Icons.list), 'Daftar Antrian',
-                      '/list-vehicle'),
+
+                  Obx(() => controller.role.value == 'Security'
+                      ? buttonMenu(const Icon(Icons.add),
+                          'Tambah Data Kendaraan', '/add-data-kendaraan')
+                      : Container()),
+                  // buttonMenu(const Icon(Icons.list), 'Daftar Antrian',
+                  //     '/list-vehicle'),
+
                   buttonMenu(const Icon(Icons.qr_code_scanner), 'Scan QR Code',
                       '/scan-qrcode'),
                   SizedBox(height: Get.height * 0.1 - 30),
@@ -84,7 +88,7 @@ class HomeView extends GetView<HomeController> {
                           backgroundColor: Colors.red,
                         ),
                         onPressed: () {
-                          Get.toNamed('/login');
+                          controller.logout();
                         },
                         child: Text('Keluar',
                             style: GoogleFonts.openSans(

@@ -1,127 +1,72 @@
 import 'dart:convert';
 
-List<QueueModel> queueModelFromJson(String str) =>
-    List<QueueModel>.from(json.decode(str).map((x) => QueueModel.fromJson(x)));
+QueueModel queueModelFromJson(String str) =>
+    QueueModel.fromJson(json.decode(str));
 
-String queueModelToJson(List<QueueModel> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String queueModelToJson(QueueModel data) => json.encode(data.toJson());
 
 class QueueModel {
-  final int id;
-  final int gate;
-  final int tujuanId;
-  final int transportId;
-  final int jenisKendaraanId;
-  final String noSpk;
-  final String noDo;
-  final String volume;
-  final int batch;
-  final String status;
-  final String mulaiMuat;
-  final String selesaiMuat;
-  final Tujuan tujuan;
-  final Transport transport;
-  final JenisKendaraan jenisKendaraan;
+  final List<Queue>? data;
 
   QueueModel({
-    required this.id,
-    required this.gate,
-    required this.tujuanId,
-    required this.transportId,
-    required this.jenisKendaraanId,
-    required this.noSpk,
-    required this.noDo,
-    required this.volume,
-    required this.batch,
-    required this.status,
-    required this.mulaiMuat,
-    required this.selesaiMuat,
-    required this.tujuan,
-    required this.transport,
-    required this.jenisKendaraan,
+    this.data,
   });
 
   factory QueueModel.fromJson(Map<String, dynamic> json) => QueueModel(
+        data: List<Queue>.from(json["data"] != null
+            ? json["data"].map((x) => Queue.fromJson(x))
+            : []),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
+      };
+}
+
+class Queue {
+  final int id;
+  final String status;
+
+  Queue({
+    required this.id,
+    required this.status,
+  });
+
+  factory Queue.fromJson(Map<String, dynamic> json) => Queue(
         id: json["id"],
-        gate: json["gate"],
-        tujuanId: json["tujuanId"],
-        transportId: json["transportId"],
-        jenisKendaraanId: json["jenis_kendaraanId"],
-        noSpk: json["no_spk"],
-        noDo: json["no_do"],
-        volume: json["volume"],
-        batch: json["batch"],
         status: json["status"],
-        mulaiMuat: json["mulai_muat"],
-        selesaiMuat: json["selesai_muat"],
-        tujuan: Tujuan.fromJson(json["tujuan"]),
-        transport: Transport.fromJson(json["transport"]),
-        jenisKendaraan: JenisKendaraan.fromJson(json["jenis_kendaraan"]),
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "gate": gate,
-        "tujuanId": tujuanId,
-        "transportId": transportId,
-        "jenis_kendaraanId": jenisKendaraanId,
-        "no_spk": noSpk,
-        "no_do": noDo,
-        "volume": volume,
-        "batch": batch,
         "status": status,
-        "mulai_muat": mulaiMuat,
-        "selesai_muat": selesaiMuat,
-        "tujuan": tujuan.toJson(),
-        "transport": transport.toJson(),
-        "jenis_kendaraan": jenisKendaraan.toJson(),
       };
 }
 
-class JenisKendaraan {
-  final String jenisKendaraan;
+class CreatedBy {
+  final int id;
+  final String username;
+  final String name;
+  final String role;
 
-  JenisKendaraan({
-    required this.jenisKendaraan,
+  CreatedBy({
+    required this.id,
+    required this.username,
+    required this.name,
+    required this.role,
   });
 
-  factory JenisKendaraan.fromJson(Map<String, dynamic> json) => JenisKendaraan(
-        jenisKendaraan: json["jenis_kendaraan"],
+  factory CreatedBy.fromJson(Map<String, dynamic> json) => CreatedBy(
+        id: json["id"],
+        username: json["username"],
+        name: json["name"],
+        role: json["role"],
       );
 
   Map<String, dynamic> toJson() => {
-        "jenis_kendaraan": jenisKendaraan,
-      };
-}
-
-class Transport {
-  final String transport;
-
-  Transport({
-    required this.transport,
-  });
-
-  factory Transport.fromJson(Map<String, dynamic> json) => Transport(
-        transport: json["transport"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "transport": transport,
-      };
-}
-
-class Tujuan {
-  final String tujuan;
-
-  Tujuan({
-    required this.tujuan,
-  });
-
-  factory Tujuan.fromJson(Map<String, dynamic> json) => Tujuan(
-        tujuan: json["tujuan"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "tujuan": tujuan,
+        "id": id,
+        "username": username,
+        "name": name,
+        "role": role,
       };
 }

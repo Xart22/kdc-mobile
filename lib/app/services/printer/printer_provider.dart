@@ -22,6 +22,8 @@ class PrinterService extends GetxService {
       }
     });
 
+    print(bluetoothPrint.isConnected);
+
     bluetoothPrint.state.listen((state) {
       print('cur device status: $state');
 

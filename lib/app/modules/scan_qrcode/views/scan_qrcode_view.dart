@@ -22,7 +22,7 @@ class ScanQrcodeView extends GetView<ScanQrcodeController> {
         centerTitle: true,
       ),
       body: Obx(() {
-        if (controller.isTablet.value) {
+        if (controller.isTablet.value && controller.role.value != 'Security') {
           return tableScanner(context);
         } else {
           return mobileScanner(scanWindow);
@@ -32,18 +32,56 @@ class ScanQrcodeView extends GetView<ScanQrcodeController> {
   }
 
   Widget tableScanner(context) {
-    return TextFormField(
-        enabled: true,
-        autofocus: true,
-        autocorrect: false,
-        focusNode: FocusNode(),
-        textInputAction: TextInputAction.done,
-        keyboardType: TextInputType.text,
-        onFieldSubmitted: (val) {
-          //hide keyboard
-          FocusScope.of(context).unfocus();
-          print(val); // the scan value`},
-        });
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(
+          margin: const EdgeInsets.only(top: 10),
+          decoration: BoxDecoration(
+            color: const Color(0xffE8EDF1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: TextFormField(
+            controller: controller.barcodeController,
+            focusNode: FocusNode(),
+            autofocus: true,
+            textInputAction: TextInputAction.done,
+            onEditingComplete: () {
+              controller.updateByTablet();
+            },
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(
+                borderSide: BorderSide.none,
+              ),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 15.0, horizontal: 12.0),
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        Obx(() => controller.showScannerField.value
+            ? Container(
+                height: 50,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: const Color(0xffED1C24)),
+                child: TextButton(
+                  onPressed: () {
+                    Get.offNamed('/home');
+                  },
+                  child: const Text(
+                    'Selesai',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              )
+            : Container()),
+      ]),
+    );
   }
 
   Widget mobileScanner(Rect scanWindow) {

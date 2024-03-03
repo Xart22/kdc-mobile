@@ -4,43 +4,110 @@ import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:kdc_mobile/app/data/model/queue_response.dart';
-import 'package:kdc_mobile/app/services/api/queue_provider.dart';
+import 'package:kdc_mobile/app/data/model/jenis_kendaraan_response.dart';
+import 'package:kdc_mobile/app/data/model/transport_response.dart';
+import 'package:kdc_mobile/app/data/model/tujuan_response.dart';
+import 'package:kdc_mobile/app/helper/snackbar.dart';
+import 'package:kdc_mobile/app/services/api/jenis_kendaraan_provider.dart';
+import 'package:kdc_mobile/app/services/api/pool_provider.dart';
+import 'package:kdc_mobile/app/services/api/transport_provider.dart';
+import 'package:kdc_mobile/app/services/api/tujuan_provider.dart';
 import 'package:kdc_mobile/app/services/printer/printer_provider.dart';
 
 class AddDataKendaraanController extends GetxController {
-  var time = ''.obs;
-  TextEditingController nomorGateController = TextEditingController();
-  TextEditingController perusahaanController = TextEditingController();
+  TextEditingController nomoUrutController = TextEditingController();
   TextEditingController kodeWilayahController = TextEditingController();
   TextEditingController nomorTnkbController = TextEditingController();
   TextEditingController seriWilayahController = TextEditingController();
 
-  var data = <QueueModel>[].obs;
-  QueueModel? selectedData;
-
+  DateTime now = DateTime.now();
+  var time = ''.obs;
   var isLoading = true.obs;
+  var dataTujuan = <Tujuan>[].obs;
+  var dataTransport = <Transport>[].obs;
+  var dataJenisKendaraan = <JenisKendaraan>[].obs;
+
+  Tujuan? selectedTujuan;
+  Transport? selectedTransport;
+  JenisKendaraan? selectedJenisKendaraan;
 
   startTimer() {
     Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      var now = DateTime.now();
       time.value = DateFormat('dd-MM-yyyy HH:mm').format(now).toString();
     });
   }
 
-  getDataQueues() async {
-    await QueueProvider.getQueues().then((value) {
-      data.assignAll(value);
-      isLoading.value = false;
+  getData() async {
+    isLoading.value = true;
+    await TujuanProvider.getData().then((value) {
+      dataTujuan.value = value.data;
+    });
+    await TransportProvider.getData().then((value) {
+      dataTransport.value = value.data;
+    });
+    await JenisKendaraanProvider.getData().then((value) {
+      dataJenisKendaraan.value = value.data;
+    });
+    await PoolProvider.getNoUrut().then((value) {
+      nomoUrutController.text = value;
+    });
+    isLoading.value = false;
+  }
+
+  validateData() {
+    if (selectedTransport == null) {
+      showToast('Error', 'Transport harus diisi');
+      return false;
+    }
+    if (selectedTujuan == null) {
+      showToast('Error', 'Tujuan harus diisi');
+      return false;
+    }
+    if (selectedJenisKendaraan == null) {
+      showToast('Error', 'Jenis Kendaraan harus diisi');
+      return false;
+    }
+    if (kodeWilayahController.text.isEmpty) {
+      showToast('Error', 'Kode Wilayah harus diisi');
+      return false;
+    }
+    if (nomorTnkbController.text.isEmpty) {
+      showToast('Error', 'Nomor TNKB harus diisi');
+      return false;
+    }
+    if (seriWilayahController.text.isEmpty) {
+      showToast('Error', 'Seri Wilayah harus diisi');
+      return false;
+    }
+    return true;
+  }
+
+  updateBarcode() async {
+    if (!validateData()) {
+      return;
+    }
+
+    await PoolProvider.createVehicle({
+      "no_urut": nomoUrutController.text,
+      "no_polisi":
+          "${kodeWilayahController.text}${nomorTnkbController.text}${seriWilayahController.text}",
+      "jenis_kendaraan_id": selectedJenisKendaraan!.id,
+      "tujuan_id": selectedTujuan!.id,
+      "transport_id": selectedTransport!.id,
+    }).then((value) {
+      if (value.isNotEmpty) {
+        printBarcode(value, nomoUrutController.text);
+        Get.back();
+        showToast('Success', 'Data berhasil disimpan');
+      } else {
+        showToast('Error', 'Gagal menyimpan data');
+      }
     });
   }
 
-  onSelectedData(QueueModel? value) {
-    selectedData = value;
-    nomorGateController.text = value!.gate.toString();
-  }
-
-  printBarcode() async {
+  printBarcode(String id, String noUrut) async {
+    String data =
+        "$id|${kodeWilayahController.text}${nomorTnkbController.text}${seriWilayahController.text}";
     Map<String, dynamic> config = {};
     List<LineText> list = [];
     list.add(LineText(
@@ -59,26 +126,26 @@ class AddDataKendaraanController extends GetxController {
     list.add(LineText(linefeed: 1));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
-        content: 'Nomor Gate',
-        weight: 1,
-        align: LineText.ALIGN_CENTER,
-        linefeed: 1));
-    list.add(LineText(
-        type: LineText.TYPE_TEXT,
-        content: nomorGateController.text,
-        weight: 1,
-        align: LineText.ALIGN_CENTER,
-        linefeed: 1));
-    list.add(LineText(linefeed: 1));
-    list.add(LineText(
-        type: LineText.TYPE_TEXT,
         content: 'Transport',
         weight: 1,
         align: LineText.ALIGN_CENTER,
         linefeed: 1));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
-        content: selectedData!.transport.transport,
+        content: selectedTransport!.transport,
+        weight: 1,
+        align: LineText.ALIGN_CENTER,
+        linefeed: 1));
+    list.add(LineText(linefeed: 1));
+    list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: 'Tujuan',
+        weight: 1,
+        align: LineText.ALIGN_CENTER,
+        linefeed: 1));
+    list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: selectedTujuan!.tujuan,
         weight: 1,
         align: LineText.ALIGN_CENTER,
         linefeed: 1));
@@ -91,14 +158,28 @@ class AddDataKendaraanController extends GetxController {
         linefeed: 1));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
-        content: "D 1234 AB",
+        content:
+            "${kodeWilayahController.text} ${nomorTnkbController.text} ${seriWilayahController.text}",
+        weight: 1,
+        align: LineText.ALIGN_CENTER,
+        linefeed: 1));
+    list.add(LineText(linefeed: 1));
+    list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: "No Urut",
+        weight: 1,
+        align: LineText.ALIGN_CENTER,
+        linefeed: 1));
+    list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: noUrut,
         weight: 1,
         align: LineText.ALIGN_CENTER,
         linefeed: 1));
     list.add(LineText(linefeed: 1));
     list.add(LineText(
       type: LineText.TYPE_QRCODE,
-      content: 'D 1234 AB',
+      content: data,
       align: LineText.ALIGN_CENTER,
       size: 20,
     ));
@@ -109,7 +190,7 @@ class AddDataKendaraanController extends GetxController {
 
   @override
   void onInit() {
-    getDataQueues();
+    getData();
     super.onInit();
     startTimer();
   }

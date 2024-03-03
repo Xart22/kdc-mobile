@@ -18,7 +18,6 @@ class LoginView extends GetView<LoginController> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: Get.height * 0.1),
               Text(
                 'LOGIN',
                 style: GoogleFonts.openSans(
@@ -34,7 +33,6 @@ class LoginView extends GetView<LoginController> {
                   color: Colors.black,
                 ),
               ),
-              const SizedBox(height: 20),
               Container(
                 height: Get.height * 0.3,
                 width: Get.height * 0.3,
@@ -48,11 +46,48 @@ class LoginView extends GetView<LoginController> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("PIN",
+                  Text("Username",
+                      style: GoogleFonts.openSans(
+                        fontSize: 14,
+                        color: Colors.black,
+                      )),
+                  Container(
+                    margin: const EdgeInsets.only(top: 10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xffE8EDF1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: TextFormField(
+                      textInputAction: TextInputAction.next,
+                      controller: controller.usernameController,
+                      onChanged: controller.usernameOnChanged,
+                      decoration: InputDecoration(
+                        hintText: "Masukkan Username",
+                        hintStyle: GoogleFonts.openSans(
+                          fontSize: 14,
+                          color: Colors.black,
+                        ),
+                        border: const OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 15.0, horizontal: 12.0),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Obx(() => Text(
+                        controller.usernameError.value,
+                        style: GoogleFonts.openSans(
+                          fontSize: 12,
+                          color: Colors.red,
+                        ),
+                      )),
+                  const SizedBox(height: 10),
+                  Text("Password",
                       style: GoogleFonts.openSans(
                         fontSize: 14,
                         color: Colors.black,
@@ -64,11 +99,12 @@ class LoginView extends GetView<LoginController> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: TextFormField(
-                          textInputAction: TextInputAction.next,
-                          onChanged: controller.usernameOnChanged,
-                          controller: controller.usernameController,
+                          textInputAction: TextInputAction.done,
+                          onChanged: controller.passwordOnChanged,
+                          controller: controller.passwordController,
+                          obscureText: !controller.showPassword.value,
                           decoration: InputDecoration(
-                            hintText: "Masukkan PIN",
+                            hintText: "Masukkan Password",
                             hintStyle: GoogleFonts.openSans(
                               fontSize: 14,
                               color: Colors.black,
@@ -76,48 +112,32 @@ class LoginView extends GetView<LoginController> {
                             border: const OutlineInputBorder(
                               borderSide: BorderSide.none,
                             ),
-                            errorText: controller.usernameError.value != ''
-                                ? controller.usernameError.value
-                                : null,
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 15.0, horizontal: 12.0),
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                controller.showPassword.value =
+                                    !controller.showPassword.value;
+                              },
+                              icon: Icon(
+                                controller.showPassword.value
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Colors.black,
+                              ),
+                            ),
                           ),
                         ),
                       )),
-                  const SizedBox(height: 20),
-                  Text("PIN",
-                      style: GoogleFonts.openSans(
-                        fontSize: 14,
-                        color: Colors.black,
-                      )),
-                  Obx(() => Container(
-                        margin: const EdgeInsets.only(top: 10),
-                        decoration: BoxDecoration(
-                          color: const Color(0xffE8EDF1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: TextFormField(
-                          textInputAction: TextInputAction.next,
-                          onChanged: controller.usernameOnChanged,
-                          controller: controller.usernameController,
-                          decoration: InputDecoration(
-                            hintText: "Masukkan PIN",
-                            hintStyle: GoogleFonts.openSans(
-                              fontSize: 14,
-                              color: Colors.black,
-                            ),
-                            border: const OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                            ),
-                            errorText: controller.usernameError.value != ''
-                                ? controller.usernameError.value
-                                : null,
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 15.0, horizontal: 12.0),
-                          ),
+                  const SizedBox(height: 5),
+                  Obx(() => Text(
+                        controller.passwordError.value,
+                        style: GoogleFonts.openSans(
+                          fontSize: 12,
+                          color: Colors.red,
                         ),
                       )),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 10),
                   Container(
                     height: 50,
                     width: double.infinity,
@@ -126,7 +146,7 @@ class LoginView extends GetView<LoginController> {
                         color: const Color(0xffED1C24)),
                     child: TextButton(
                       onPressed: () {
-                        Get.offNamed('/home');
+                        controller.login();
                       },
                       child: const Text(
                         'Masuk',
