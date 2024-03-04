@@ -30,12 +30,6 @@ class QueueProvider {
       body = {
         'status': status,
         'mulai_exit': DateTime.now().toString(),
-      };
-    }
-    if (status == "Waiting Exit") {
-      body = {
-        'status': status,
-        'selesai_exit': DateTime.now().toString(),
         'alert_exit': '0',
       };
     }

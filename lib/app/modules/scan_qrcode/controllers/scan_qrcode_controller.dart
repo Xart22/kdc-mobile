@@ -9,7 +9,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 class ScanQrcodeController extends GetxController {
   TextEditingController barcodeController = TextEditingController();
   TextEditingController noDoController = TextEditingController();
-  late MobileScannerController controllerScanner;
+  late MobileScannerController controllerScanner = MobileScannerController();
   var arguments =
       MobileScannerArguments(size: const Size(0, 0), hasTorch: false).obs;
 
@@ -29,12 +29,12 @@ class ScanQrcodeController extends GetxController {
     controllerScanner.stop();
     isLoading.value = true;
     await QueueProvider.getQueueByid(id).then((value) async {
-      if (value.status == "Waiting Loading Process") {
+      if (value.status == "Waiting Loading Process" &&
+          role.value == "Warehouse Koordinator") {
         await updateStatus("Loading Process");
-      } else if (value.status == "Loading Process") {
+      } else if (value.status == "Loading Process" &&
+          role.value == "Warehouse Koordinator") {
         await updateStatus("Taking DO");
-      } else if (value.status == "Waiting Exit") {
-        await updateStatus("Process Done");
       } else {
         Get.back();
         showToast("Error", "Data tidak ditemukan");
@@ -43,15 +43,14 @@ class ScanQrcodeController extends GetxController {
   }
 
   updateByTablet() async {
-    id = barcodeController.text.split(",")[0].replaceAll("id:", "");
-    noPol = barcodeController.text.split(",")[1];
+    id = barcodeController.text.split("|")[0];
+    noPol = barcodeController.text.split("|")[1];
     isLoading.value = true;
     await QueueProvider.getQueueByid(id).then((value) async {
-      if (value.status != 'Taking DO') {
-        Get.back();
-        showToast("Error", "Data tidak ditemukan");
-      } else {
+      if (value.status == 'Taking DO' && role.value == "Admin Office") {
         await updateStatus("Waiting Exit");
+      } else if (value.status == 'Waiting Exit' && role.value == "Security") {
+        await updateStatus("Process Done");
       }
     });
   }
@@ -68,11 +67,6 @@ class ScanQrcodeController extends GetxController {
   @override
   void onInit() async {
     role.value = await GetStorage().read('user')['role'];
-    if (role.value == 'Security') {
-      controllerScanner = MobileScannerController(facing: CameraFacing.front);
-    } else {
-      controllerScanner = MobileScannerController(facing: CameraFacing.back);
-    }
     isTablet.value = Get.width > 650;
 
     super.onInit();
