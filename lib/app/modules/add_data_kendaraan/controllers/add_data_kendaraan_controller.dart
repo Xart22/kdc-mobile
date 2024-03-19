@@ -37,6 +37,14 @@ class AddDataKendaraanController extends GetxController {
     });
   }
 
+  void checkPrinter() async {
+    await PrinterService().bluetoothPrint.isConnected.then((value) async {
+      if (!value!) {
+        await PrinterService().connectPrinter();
+      }
+    });
+  }
+
   getData() async {
     isLoading.value = true;
     await TujuanProvider.getData().then((value) {
@@ -106,6 +114,7 @@ class AddDataKendaraanController extends GetxController {
   }
 
   printBarcode(String id, String noUrut) async {
+    checkPrinter();
     String data =
         "$id|${kodeWilayahController.text}${nomorTnkbController.text}${seriWilayahController.text}";
     Map<String, dynamic> config = {};

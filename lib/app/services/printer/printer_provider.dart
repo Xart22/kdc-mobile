@@ -8,6 +8,16 @@ class PrinterService extends GetxService {
   String address = '86:67:7A:0D:EC:27';
   bool isPrinterConnected = false;
 
+  Future connectPrinter() {
+    bluetoothPrint.isConnected.then((value) async {
+      if (!value!) {
+        await bluetoothPrint
+            .connect(BluetoothDevice.fromJson({'address': address}));
+      }
+    });
+    return Future.value();
+  }
+
   Future<PrinterService> initPrinter() async {
     if (await FlutterBluePluss.FlutterBluePlus.isSupported == false) {
       print("Bluetooth not supported by this device");
