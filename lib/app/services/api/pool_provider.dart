@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:kdc_mobile/app/data/model/kendaraan_response.dart';
 import 'package:kdc_mobile/app/helper/snackbar.dart';
 import '../../helper/config.dart';
 
@@ -41,6 +42,23 @@ class PoolProvider {
         return data['vehicle_id'].toString();
       } else {
         showToast('Error', 'Failed to create data');
+        throw Exception('Failed to load data');
+      }
+    } catch (e, s) {
+      print(s);
+      throw Exception('Failed to load data');
+    }
+  }
+
+  static Future<KendaraanResponseModel> getKendaraan() async {
+    var token = await storage.read('accestoken');
+    try {
+      final response = await client.get(Uri.parse(Config.kendaraan),
+          headers: {'Authorization': 'Bearer $token'});
+      if (response.statusCode == 200) {
+        return kendaraanResponseModelFromJson(response.body);
+      } else {
+        Get.snackbar('Error', 'Failed to load data');
         throw Exception('Failed to load data');
       }
     } catch (e, s) {

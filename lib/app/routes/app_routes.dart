@@ -7,6 +7,7 @@ abstract class Routes {
   static const LOGIN = _Paths.LOGIN;
   static const ADD_DATA_KENDARAAN = _Paths.ADD_DATA_KENDARAAN;
   static const SCAN_QRCODE = _Paths.SCAN_QRCODE;
+  static const LIST_KENDARAAN = _Paths.LIST_KENDARAAN;
 }
 
 abstract class _Paths {
@@ -15,4 +16,5 @@ abstract class _Paths {
   static const LOGIN = '/login';
   static const ADD_DATA_KENDARAAN = '/add-data-kendaraan';
   static const SCAN_QRCODE = '/scan-qrcode';
+  static const LIST_KENDARAAN = '/list-kendaraan';
 }

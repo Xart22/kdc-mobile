@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:kdc_mobile/app/data/model/queue_response.dart';
+import 'package:kdc_mobile/app/helper/snackbar.dart';
 import '../../helper/config.dart';
 
 class QueueProvider {
@@ -48,7 +49,7 @@ class QueueProvider {
     if (response.statusCode == 200) {
       return true;
     } else {
-      Get.snackbar('Error', 'Failed to update data');
+      showToast('Error', "Status Tidak Valid");
       throw Exception('Failed to update data');
     }
   }
@@ -61,7 +62,8 @@ class QueueProvider {
       Queue queue = Queue.fromJson(json.decode(response.body)['data']);
       return queue;
     } else {
-      Get.snackbar('Error', 'Failed to update data');
+      Get.back();
+      showToast('Error', "Status Tidak Valid");
       throw Exception('Failed to update data');
     }
   }

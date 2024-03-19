@@ -22,7 +22,7 @@ class ScanQrcodeView extends GetView<ScanQrcodeController> {
         centerTitle: true,
       ),
       body: Obx(() {
-        if (controller.isTablet.value && controller.role.value != 'Security') {
+        if (controller.isTablet.value) {
           return tableScanner(context);
         } else {
           return mobileScanner(scanWindow);

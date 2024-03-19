@@ -263,7 +263,7 @@ class AddDataKendaraanView extends GetView<AddDataKendaraanController> {
                   controller: controller.kodeWilayahController,
                   textCapitalization: TextCapitalization.characters,
                   inputFormatters: [
-                    LengthLimitingTextInputFormatter(1),
+                    LengthLimitingTextInputFormatter(2),
                     FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
                   ],
                   textAlign: TextAlign.center,

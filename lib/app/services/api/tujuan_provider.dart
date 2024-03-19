@@ -19,8 +19,8 @@ class TujuanProvider {
         Get.snackbar('Error', 'Failed to load data');
         throw Exception('Failed to load data');
       }
-    } catch (e) {
-      print(e);
+    } catch (e, s) {
+      print(s);
       throw Exception('Failed to load data');
     }
   }

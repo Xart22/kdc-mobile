@@ -47,9 +47,9 @@ class ScanQrcodeController extends GetxController {
     noPol = barcodeController.text.split("|")[1];
     isLoading.value = true;
     await QueueProvider.getQueueByid(id).then((value) async {
-      if (value.status == 'Taking DO' && role.value == "Admin Office") {
+      if (value.status == 'Taking DO') {
         await updateStatus("Waiting Exit");
-      } else if (value.status == 'Waiting Exit' && role.value == "Security") {
+      } else if (value.status == 'Waiting Exit') {
         await updateStatus("Process Done");
       }
     });
@@ -60,6 +60,8 @@ class ScanQrcodeController extends GetxController {
       if (value) {
         Get.back();
         showToast("Success", "Data berhasil diupdate");
+      } else {
+        showToast("error", "Status Tidak Valid");
       }
     });
   }

@@ -67,14 +67,12 @@ class HomeView extends GetView<HomeController> {
                     ],
                   ),
                   const SizedBox(height: 20),
-
                   Obx(() => controller.role.value == 'Security'
                       ? buttonMenu(const Icon(Icons.add),
                           'Tambah Data Kendaraan', '/add-data-kendaraan')
                       : Container()),
-                  // buttonMenu(const Icon(Icons.list), 'Daftar Antrian',
-                  //     '/list-vehicle'),
-
+                  buttonMenu(const Icon(Icons.list), 'Daftar Antrian',
+                      '/list-kendaraan'),
                   buttonMenu(const Icon(Icons.qr_code_scanner), 'Scan QR Code',
                       '/scan-qrcode'),
                   SizedBox(height: Get.height * 0.1 - 30),
