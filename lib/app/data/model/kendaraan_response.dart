@@ -45,6 +45,7 @@ class Kendaraan {
   Transport transport;
   Tujuan tujuan;
   JenisKendaraan jenisKendaraan;
+  String jamMasuk;
 
   Kendaraan({
     required this.id,
@@ -59,6 +60,7 @@ class Kendaraan {
     required this.transport,
     required this.tujuan,
     required this.jenisKendaraan,
+    required this.jamMasuk,
   });
 
   factory Kendaraan.fromJson(Map<String, dynamic> json) => Kendaraan(
@@ -74,6 +76,7 @@ class Kendaraan {
         transport: Transport.fromJson(json["transport"]),
         tujuan: Tujuan.fromJson(json["tujuan"]),
         jenisKendaraan: JenisKendaraan.fromJson(json["jenis_kendaraan"]),
+        jamMasuk: json["jam_masuk"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -90,6 +93,7 @@ class Kendaraan {
         "transport": transport.toJson(),
         "tujuan": tujuan.toJson(),
         "jenis_kendaraan": jenisKendaraan.toJson(),
+        "jam_masuk": jamMasuk,
       };
 }
 

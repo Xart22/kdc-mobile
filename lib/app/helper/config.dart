@@ -1,5 +1,6 @@
 class Config {
-  static const String baseUrl = "http://172.16.10.1:8080/kdc-be/public/api";
+  //static const String baseUrl = "http://172.16.10.1:8080/kdc-be/public/api";
+  static const String baseUrl = "http://192.168.1.7/kdc-be/public/api";
 
   static const String loginUrl = "$baseUrl/login";
   static const String logoutUrl = "$baseUrl/logout";

@@ -50,7 +50,7 @@ class ListKendaraanController extends GetxController {
         linefeed: 1));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
-        content: time.value,
+        content: selectedKendaraan!.jamMasuk,
         weight: 1,
         align: LineText.ALIGN_CENTER,
         linefeed: 1));
